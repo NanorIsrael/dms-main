@@ -30,7 +30,7 @@ class ProductUser(db.Model):
 
 @app.route('/')
 def index():
-	return 'Hello'
+	return 'Hello world'
 
 
 if __name__ == "__main__":
