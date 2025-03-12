@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  db:
+  db_main:
     image: postgres:latest
     container_name: postgres_db_main
     restart: always
@@ -9,17 +9,43 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5433:5433"
+      - "5433:5432"
+    networks:
+      - rmq_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile
+    command: 'python3 main.py'
     ports:
-      - 8001:5000
+      - "8001:5000"
     volumes:
       - .:/app
     depends_on:
-      - db
-
+      db_main:
+        condition: service_healthy
+    networks:
+      - rmq_network
+    env_file:
+      - .env
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python3 consumer.py'
+    depends_on:
+      - db_main
+    networks:
+      - rmq_network
 volumes:
   postgres_data:
+
+networks:
+  rmq_network:
+    external: true
