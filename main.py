@@ -1,3 +1,5 @@
+import json
+from requests import Response
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
@@ -7,7 +9,7 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:postgres@db:5432/main'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:postgres@db_main:5432/main'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@db:5432/main')
@@ -30,7 +32,8 @@ class ProductUser(db.Model):
 
 @app.route('/')
 def index():
-	return 'Hello world'
+	print('====>', Product.query.get(1))
+	return json.dumps({'Product': 'add'})
 
 
 if __name__ == "__main__":
