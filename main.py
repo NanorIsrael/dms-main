@@ -1,6 +1,5 @@
-import json
 from requests import Response
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 from flask_migrate import Migrate
@@ -22,6 +21,7 @@ class Product(db.Model):
 	id = db.Column(db.Integer, primary_key=True, autoincrement=False)
 	title = db.Column(db.String(255))
 	image = db.Column(db.String(255))
+	likes = db.Column(db.Integer())
 
 class ProductUser(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -30,10 +30,11 @@ class ProductUser(db.Model):
 
 	UniqueConstraint('user_id', 'product_id', name="user_product_unique")
 
-@app.route('/')
+@app.route('/api/products/')
 def index():
-	print('====>', Product.query.get(1))
-	return json.dumps({'Product': 'add'})
+	all_products = Product.query.all()
+	print('====>', all_products)
+	return jsonify(all_products)
 
 
 if __name__ == "__main__":

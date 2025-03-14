@@ -4,7 +4,8 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN  sed -i 's/\r$//' /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8001

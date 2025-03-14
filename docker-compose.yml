@@ -21,13 +21,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: sh -c 'python3 main.py'
     ports:
       - "8001:5000"
     volumes:
       - .:/app
     depends_on:
-      db_main:
-        condition: service_healthy
+      - db_main
     networks:
       - rmq_network
     env_file:
@@ -36,11 +36,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: 'python3 consumer.py'
     depends_on:
       - db_main
     networks:
       - rmq_network
+    command: >
+      sh -c 'python3 consumer.py'
 volumes:
   postgres_data:
 
